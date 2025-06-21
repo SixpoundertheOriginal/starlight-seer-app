@@ -5,12 +5,54 @@ import { getRandomCards } from '@/data/tarotDeck';
 import { SPREADS } from '@/data/spreads';
 import { useToast } from '@/hooks/use-toast';
 
-export const useReadingGeneration = () => {
+export const useAIReadingGeneration = () => {
   const [isGeneratingReading, setIsGeneratingReading] = useState(false);
   const { toast } = useToast();
 
-  // Enhanced static interpretation as fallback
-  const generateInterpretation = useCallback((positions: CardPosition[], userQuestion?: string): string => {
+  const generateAIInterpretation = useCallback(async (positions: CardPosition[], userQuestion?: string): Promise<string> => {
+    try {
+      const cardsDescription = positions.map(pos => 
+        `${pos.name}: ${pos.card!.name}${pos.isReversed ? ' (Reversed)' : ''} - ${pos.isReversed ? pos.card!.reversedMeaning : pos.card!.uprightMeaning}`
+      ).join('\n');
+
+      const prompt = `You are a mystical tarot reader with deep knowledge of the cosmic energies. Provide a profound, insightful reading based on these cards:
+
+${cardsDescription}
+
+${userQuestion ? `The seeker asks: "${userQuestion}"` : 'This is a general guidance reading.'}
+
+Please provide a mystical, flowing interpretation that:
+- Speaks directly to the seeker with warmth and wisdom
+- Weaves the cards together into a cohesive narrative
+- Uses evocative, mystical language while remaining accessible
+- Offers guidance and insight rather than predictions
+- Acknowledges the seeker's power to shape their destiny
+- Is approximately 200-300 words
+
+Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdom throughout.`;
+
+      const response = await fetch('/api/generate-reading', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!response.ok) {
+        throw new Error('AI service unavailable');
+      }
+
+      const data = await response.json();
+      return data.interpretation;
+    } catch (error) {
+      console.error('AI interpretation failed:', error);
+      // Fallback to enhanced static interpretation
+      return generateEnhancedStaticInterpretation(positions, userQuestion);
+    }
+  }, []);
+
+  const generateEnhancedStaticInterpretation = useCallback((positions: CardPosition[], userQuestion?: string): string => {
     let interpretation = "The cosmic tapestry reveals a profound message woven through the ancient symbols before you.\n\n";
     
     if (userQuestion) {
@@ -54,21 +96,19 @@ export const useReadingGeneration = () => {
     setIsGeneratingReading(true);
     
     try {
-      // Simulate mystical delay (reduced since we now have shuffle animation)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       const spread = { ...SPREADS[selectedSpread === 'single' ? 'single' : 'threeCard'] };
       const cardCount = spread.positions.length;
       const drawnCards = getRandomCards(cardCount);
       
-      // Assign cards to positions with random reversal chance
       spread.positions = spread.positions.map((position, index) => ({
         ...position,
         card: drawnCards[index],
-        isReversed: Math.random() < 0.3 // 30% chance of reversal
+        isReversed: Math.random() < 0.3
       }));
 
-      const interpretation = generateInterpretation(spread.positions, question);
+      const interpretation = await generateAIInterpretation(spread.positions, question);
       
       const reading: TarotReadingType = {
         id: `reading-${Date.now()}`,
@@ -82,7 +122,7 @@ export const useReadingGeneration = () => {
       
       toast({
         title: "✨ The cosmos has spoken",
-        description: "Your mystical reading awaits discovery...",
+        description: "Your mystical reading awaits...",
       });
     } catch (error) {
       toast({
@@ -93,7 +133,7 @@ export const useReadingGeneration = () => {
     } finally {
       setIsGeneratingReading(false);
     }
-  }, [generateInterpretation, toast]);
+  }, [generateAIInterpretation, toast]);
 
   return {
     isGeneratingReading,

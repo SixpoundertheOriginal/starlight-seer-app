@@ -1,14 +1,23 @@
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useReadingFlow } from '@/hooks/useReadingFlow';
-import { useReadingGeneration } from '@/hooks/useReadingGeneration';
+import { useAIReadingGeneration } from '@/hooks/useAIReadingGeneration';
+import { useReadingHistory } from '@/hooks/useReadingHistory';
 import ReadingHeader from './ReadingHeader';
 import QuestionInput from './QuestionInput';
 import SpreadSelector from './SpreadSelector';
 import ReadingControls from './ReadingControls';
 import ReadingDisplay from './ReadingDisplay';
+import CardShuffleAnimation from './CardShuffleAnimation';
+import ReadingHistory from './ReadingHistory';
+import { Button } from '@/components/ui/button';
+import { History } from 'lucide-react';
+import { TarotReading } from '@/types/tarot';
 
 const ReadingContainer: React.FC = () => {
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  
   const {
     currentStep,
     question,
@@ -21,11 +30,27 @@ const ReadingContainer: React.FC = () => {
     resetReading
   } = useReadingFlow();
 
-  const { isGeneratingReading, generateReading } = useReadingGeneration();
+  const { isGeneratingReading, generateReading } = useAIReadingGeneration();
+  const { saveReading } = useReadingHistory();
 
   const handleGenerateReading = useCallback(() => {
-    generateReading(selectedSpread, question, handleReadingComplete);
-  }, [generateReading, selectedSpread, question, handleReadingComplete]);
+    setIsShuffling(true);
+  }, []);
+
+  const handleShuffleComplete = useCallback(() => {
+    setIsShuffling(false);
+    generateReading(selectedSpread, question, (reading) => {
+      handleReadingComplete(reading);
+      saveReading(reading);
+    });
+  }, [generateReading, selectedSpread, question, handleReadingComplete, saveReading]);
+
+  const handleSelectHistoryReading = useCallback((reading: TarotReading) => {
+    handleReadingComplete(reading);
+    setShowHistory(false);
+  }, [handleReadingComplete]);
+
+  const cardCount = selectedSpread === 'single' ? 1 : 3;
 
   return (
     <div className="min-h-screen bg-cosmic-gradient py-12 px-4 relative">
@@ -37,6 +62,18 @@ const ReadingContainer: React.FC = () => {
         ))}
       </div>
 
+      {/* History Button */}
+      <div className="fixed top-6 right-6 z-40">
+        <Button
+          onClick={() => setShowHistory(true)}
+          variant="outline"
+          className="border-gold-400/50 text-gold-200 hover:bg-gold-400/10 backdrop-blur-sm"
+        >
+          <History className="w-4 h-4 mr-2" />
+          History
+        </Button>
+      </div>
+
       <div className="max-w-7xl mx-auto relative z-10">
         <ReadingHeader />
 
@@ -45,7 +82,7 @@ const ReadingContainer: React.FC = () => {
           <QuestionInput
             onQuestionSubmit={handleQuestionSubmit}
             onSkip={() => handleQuestionSubmit('')}
-            isLoading={isGeneratingReading}
+            isLoading={isGeneratingReading || isShuffling}
           />
         )}
 
@@ -61,7 +98,7 @@ const ReadingContainer: React.FC = () => {
           <ReadingControls
             selectedSpread={selectedSpread}
             question={question}
-            isGeneratingReading={isGeneratingReading}
+            isGeneratingReading={isGeneratingReading || isShuffling}
             onGenerateReading={handleGenerateReading}
             onNewReading={resetReading}
           />
@@ -73,7 +110,7 @@ const ReadingContainer: React.FC = () => {
             <ReadingControls
               selectedSpread={selectedSpread}
               question={question}
-              isGeneratingReading={isGeneratingReading}
+              isGeneratingReading={isGeneratingReading || isShuffling}
               onGenerateReading={handleGenerateReading}
               onNewReading={resetReading}
               showNewReading={true}
@@ -81,6 +118,20 @@ const ReadingContainer: React.FC = () => {
           </>
         )}
       </div>
+
+      {/* Shuffle Animation */}
+      <CardShuffleAnimation
+        isShuffling={isShuffling}
+        onShuffleComplete={handleShuffleComplete}
+        cardCount={cardCount}
+      />
+
+      {/* Reading History */}
+      <ReadingHistory
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        onSelectReading={handleSelectHistoryReading}
+      />
     </div>
   );
 };
