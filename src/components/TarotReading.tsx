@@ -1,78 +1,68 @@
+
 import React, { useState } from 'react';
-import TarotCard from './TarotCard';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Star, Sparkles, Moon } from 'lucide-react';
+import { Star, Sparkles, Moon, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { TarotReading as TarotReadingType, ReadingType, TarotCard, CardPosition } from '@/types/tarot';
+import { getRandomCards } from '@/data/tarotDeck';
+import { SPREADS } from '@/data/spreads';
+import QuestionInput from './QuestionInput';
+import SpreadSelector from './SpreadSelector';
+import ReadingDisplay from './ReadingDisplay';
 
-interface SelectedCard {
-  id: number;
-  name: string;
-}
-
-const tarotCards = [
-  "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
-  "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
-  "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
-  "The Devil", "The Tower", "The Star", "The Moon", "The Sun",
-  "Judgement", "The World"
-];
+type ReadingStep = 'question' | 'spread' | 'reading' | 'result';
 
 const TarotReading: React.FC = () => {
-  const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
-  const [flippedCards, setFlippedCards] = useState<number[]>([]);
-  const [reading, setReading] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<ReadingStep>('question');
+  const [question, setQuestion] = useState<string>('');
+  const [selectedSpread, setSelectedSpread] = useState<ReadingType>('single');
+  const [currentReading, setCurrentReading] = useState<TarotReadingType | null>(null);
   const [isGeneratingReading, setIsGeneratingReading] = useState(false);
   const { toast } = useToast();
 
-  const handleCardFlip = (cardId: number) => {
-    if (selectedCards.length >= 3 && !flippedCards.includes(cardId)) {
-      toast({
-        title: "Maximum cards selected",
-        description: "Please generate your reading or reset to select different cards.",
-        variant: "destructive"
-      });
-      return;
-    }
+  const handleQuestionSubmit = (userQuestion: string) => {
+    setQuestion(userQuestion);
+    setCurrentStep('spread');
+  };
 
-    setFlippedCards(prev => {
-      const newFlipped = prev.includes(cardId) 
-        ? prev.filter(id => id !== cardId)
-        : [...prev, cardId];
-      
-      const newSelected = newFlipped.map(id => ({
-        id,
-        name: tarotCards[id % tarotCards.length]
-      }));
-      
-      setSelectedCards(newSelected);
-      return newFlipped;
-    });
+  const handleSpreadSelection = () => {
+    setCurrentStep('reading');
   };
 
   const generateReading = async () => {
-    if (selectedCards.length === 0) {
-      toast({
-        title: "No cards selected",
-        description: "Please select at least one card for your reading.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsGeneratingReading(true);
     
     try {
+      // Simulate mystical delay
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      const cardNames = selectedCards.map(card => card.name).join(', ');
-      const mysticalReading = generateMysticalReading(selectedCards);
+      const spread = { ...SPREADS[selectedSpread === 'single' ? 'single' : 'threeCard'] };
+      const cardCount = spread.positions.length;
+      const drawnCards = getRandomCards(cardCount);
       
-      setReading(mysticalReading);
+      // Assign cards to positions with random reversal chance
+      spread.positions = spread.positions.map((position, index) => ({
+        ...position,
+        card: drawnCards[index],
+        isReversed: Math.random() < 0.3 // 30% chance of reversal
+      }));
+
+      const interpretation = generateInterpretation(spread.positions, question);
+      
+      const reading: TarotReadingType = {
+        id: `reading-${Date.now()}`,
+        question: question || undefined,
+        spread,
+        timestamp: new Date(),
+        interpretation
+      };
+
+      setCurrentReading(reading);
+      setCurrentStep('result');
       
       toast({
         title: "✨ Your reading is complete",
-        description: `The cards ${cardNames} have spoken...`,
+        description: "The cosmic energies have spoken...",
       });
     } catch (error) {
       toast({
@@ -85,35 +75,52 @@ const TarotReading: React.FC = () => {
     }
   };
 
-  const generateMysticalReading = (cards: SelectedCard[]): string => {
-    const readings = {
-      "The Fool": "A new journey awaits you, filled with infinite possibilities. Trust in your inner wisdom and take that leap of faith.",
-      "The Magician": "You possess all the tools needed to manifest your desires. Focus your will and channel your energy towards your goals.",
-      "The High Priestess": "Listen to your intuition and inner voice. Hidden knowledge and secrets will soon be revealed.",
-      "The Star": "Hope, healing, and spiritual guidance illuminate your path. A period of peace and inspiration is coming.",
-      "The Moon": "Illusions may cloud your judgment. Trust your instincts and navigate through uncertainty with patience.",
-      "The Sun": "Joy, success, and vitality shine upon you. This is a time of achievement and positive energy."
-    };
-
-    let reading = "The cosmic forces have aligned to bring you this message:\n\n";
+  const generateInterpretation = (positions: CardPosition[], userQuestion?: string): string => {
+    let interpretation = "The cosmic forces have aligned to bring you this message:\n\n";
     
-    cards.forEach((card, index) => {
-      const position = index === 0 ? "Past" : index === 1 ? "Present" : "Future";
-      const cardReading = readings[card.name as keyof typeof readings] || 
-        `${card.name} brings powerful energy and transformation to your journey.`;
+    if (userQuestion) {
+      interpretation += `In response to your question: "${userQuestion}"\n\n`;
+    }
+
+    if (positions.length === 1) {
+      // Single card reading
+      const position = positions[0];
+      const card = position.card!;
+      const meaning = position.isReversed ? card.reversedMeaning : card.uprightMeaning;
       
-      reading += `${position} - ${card.name}:\n${cardReading}\n\n`;
-    });
+      interpretation += `${card.name}${position.isReversed ? ' (Reversed)' : ''}:\n`;
+      interpretation += `${meaning}\n\n`;
+      interpretation += `This card brings the energy of ${card.keywords.slice(0, 3).join(', ')}. `;
+      interpretation += position.isReversed 
+        ? "In its reversed position, this card asks you to look inward and consider alternative perspectives. "
+        : "Trust in this guidance as you move forward on your path. ";
+    } else {
+      // Three card reading
+      positions.forEach((position, index) => {
+        const card = position.card!;
+        const meaning = position.isReversed ? card.reversedMeaning : card.uprightMeaning;
+        
+        interpretation += `${position.name} - ${card.name}${position.isReversed ? ' (Reversed)' : ''}:\n`;
+        interpretation += `${meaning}\n\n`;
+      });
 
-    reading += "The stars have spoken. May this guidance illuminate your path forward.";
+      interpretation += "These three cards weave together a story of your journey. ";
+      interpretation += "The past has laid the foundation, the present offers opportunities for action, ";
+      interpretation += "and the future beckons with possibility. ";
+    }
+
+    interpretation += "\nRemember, the cards offer guidance, but you hold the power to shape your destiny. ";
+    interpretation += "May this reading illuminate your path and bring you clarity on your journey forward.";
     
-    return reading;
+    return interpretation;
   };
 
   const resetReading = () => {
-    setSelectedCards([]);
-    setFlippedCards([]);
-    setReading('');
+    setCurrentStep('question');
+    setQuestion('');
+    setSelectedSpread('single');
+    setCurrentReading(null);
+    setIsGeneratingReading(false);
   };
 
   return (
@@ -121,15 +128,9 @@ const TarotReading: React.FC = () => {
       {/* Enhanced Background Effects */}
       <div className="constellation-bg"></div>
       <div className="floating-particles">
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
+        {Array.from({ length: 9 }, (_, i) => (
+          <div key={i} className="particle"></div>
+        ))}
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -143,7 +144,7 @@ const TarotReading: React.FC = () => {
             <Sparkles className="w-8 h-8 text-gold-400 ml-4 animate-pulse" style={{ animationDelay: '0.5s' }} />
           </div>
           <p className="text-gold-200 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-            Select up to three cards to reveal the cosmic wisdom that awaits you
+            Discover the wisdom of the cosmic energies through the ancient art of tarot
           </p>
           <div className="flex items-center justify-center mt-6 space-x-4">
             <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
@@ -152,85 +153,74 @@ const TarotReading: React.FC = () => {
           </div>
         </div>
 
-        {/* Enhanced Card Grid */}
-        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-6 mb-12 justify-items-center px-4">
-          {tarotCards.map((cardName, index) => (
-            <TarotCard
-              key={index}
-              id={index}
-              name={cardName}
-              isFlipped={flippedCards.includes(index)}
-              onFlip={handleCardFlip}
-              disabled={selectedCards.length >= 3 && !flippedCards.includes(index)}
-            />
-          ))}
-        </div>
-
-        {/* Enhanced Control Buttons */}
-        <div className="flex flex-col md:flex-row gap-6 justify-center mb-12">
-          <Button
-            onClick={generateReading}
-            disabled={selectedCards.length === 0 || isGeneratingReading}
-            className="mystical-button text-mystical-dark font-semibold px-10 py-4 text-xl rounded-full relative"
-          >
-            {isGeneratingReading ? (
-              <>
-                <Star className="w-6 h-6 mr-3 animate-spin" />
-                Consulting the Cosmic Forces...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-6 h-6 mr-3" />
-                Generate Reading
-              </>
-            )}
-          </Button>
-          
-          <Button
-            onClick={resetReading}
-            variant="outline"
-            className="border-gold-400/50 text-gold-200 hover:bg-gold-400/10 px-10 py-4 text-xl rounded-full backdrop-blur-sm"
-          >
-            <Moon className="w-6 h-6 mr-3" />
-            Reset Cards
-          </Button>
-        </div>
-
-        {/* Enhanced Selected Cards Display */}
-        {selectedCards.length > 0 && (
-          <Card className="mystical-border p-8 mb-12 rounded-2xl">
-            <h3 className="text-2xl font-semibold cosmic-text mb-6 text-center">Selected Cards</h3>
-            <div className="flex flex-wrap gap-4 justify-center">
-              {selectedCards.map((card, index) => (
-                <span
-                  key={card.id}
-                  className="selected-card-badge"
-                >
-                  <Star className="w-4 h-4 mr-2 text-gold-400" />
-                  {card.name}
-                </span>
-              ))}
-            </div>
-          </Card>
+        {/* Step Content */}
+        {currentStep === 'question' && (
+          <QuestionInput
+            onQuestionSubmit={handleQuestionSubmit}
+            onSkip={() => handleQuestionSubmit('')}
+            isLoading={isGeneratingReading}
+          />
         )}
 
-        {/* Enhanced Reading Display */}
-        {reading && (
-          <Card className="reading-container p-12 rounded-3xl">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold cosmic-text mb-4">Your Cosmic Reading</h2>
-              <div className="flex items-center justify-center space-x-4">
-                <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
-                <Sparkles className="w-6 h-6 text-gold-400" />
-                <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
-              </div>
-            </div>
-            <div className="prose prose-invert max-w-none">
-              <p className="text-gold-100 leading-relaxed whitespace-pre-line text-lg md:text-xl reading-text">
-                {reading}
+        {currentStep === 'spread' && (
+          <SpreadSelector
+            selectedSpread={selectedSpread}
+            onSpreadSelect={setSelectedSpread}
+            onProceed={handleSpreadSelection}
+          />
+        )}
+
+        {currentStep === 'reading' && (
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold cosmic-text mb-4">
+                {selectedSpread === 'single' ? 'Single Card Draw' : 'Past, Present, Future'}
+              </h2>
+              <p className="text-gold-200 text-lg">
+                The cards are ready to reveal their wisdom. Click below to begin your reading.
               </p>
+              {question && (
+                <div className="mt-4 p-4 bg-gold-400/10 border border-gold-400/20 rounded-lg">
+                  <p className="text-gold-300 italic">Your Question: "{question}"</p>
+                </div>
+              )}
             </div>
-          </Card>
+
+            <Button
+              onClick={generateReading}
+              disabled={isGeneratingReading}
+              className="mystical-button text-mystical-dark font-semibold px-12 py-4 text-xl rounded-full"
+            >
+              {isGeneratingReading ? (
+                <>
+                  <Star className="w-6 h-6 mr-3 animate-spin" />
+                  Consulting the Cosmic Forces...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-6 h-6 mr-3" />
+                  Draw Cards
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+
+        {currentStep === 'result' && currentReading && (
+          <div>
+            <ReadingDisplay reading={currentReading} />
+            
+            <div className="text-center mt-12">
+              <Button
+                onClick={resetReading}
+                variant="outline"
+                className="border-gold-400/50 text-gold-200 hover:bg-gold-400/10 px-10 py-4 text-xl rounded-full backdrop-blur-sm"
+              >
+                <RotateCcw className="w-6 h-6 mr-3" />
+                New Reading
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </div>
