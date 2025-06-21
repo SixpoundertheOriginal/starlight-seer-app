@@ -11,7 +11,7 @@ interface SpreadSelectorProps {
   onProceed: () => void;
 }
 
-const SpreadSelector: React.FC<SpreadSelectorProps> = ({
+const SpreadSelector: React.FC<SpreadSelectorProps> = React.memo(({
   selectedSpread,
   onSpreadSelect,
   onProceed
@@ -96,6 +96,8 @@ const SpreadSelector: React.FC<SpreadSelectorProps> = ({
       </div>
     </div>
   );
-};
+});
+
+SpreadSelector.displayName = 'SpreadSelector';
 
 export default SpreadSelector;

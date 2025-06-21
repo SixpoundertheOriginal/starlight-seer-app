@@ -9,7 +9,7 @@ interface ReadingDisplayProps {
   reading: TarotReading;
 }
 
-const ReadingDisplay: React.FC<ReadingDisplayProps> = ({ reading }) => {
+const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) => {
   return (
     <div className="space-y-8">
       {/* Question Display */}
@@ -105,6 +105,8 @@ const ReadingDisplay: React.FC<ReadingDisplayProps> = ({ reading }) => {
       </Card>
     </div>
   );
-};
+});
+
+ReadingDisplay.displayName = 'ReadingDisplay';
 
 export default ReadingDisplay;

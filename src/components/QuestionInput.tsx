@@ -11,7 +11,7 @@ interface QuestionInputProps {
   isLoading?: boolean;
 }
 
-const QuestionInput: React.FC<QuestionInputProps> = ({ 
+const QuestionInput: React.FC<QuestionInputProps> = React.memo(({ 
   onQuestionSubmit, 
   onSkip, 
   isLoading = false 
@@ -74,6 +74,8 @@ const QuestionInput: React.FC<QuestionInputProps> = ({
       </div>
     </Card>
   );
-};
+});
+
+QuestionInput.displayName = 'QuestionInput';
 
 export default QuestionInput;
