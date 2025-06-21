@@ -376,7 +376,7 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .tarot-card {
-    @apply w-28 h-42;
+    @apply w-28 h-40;
   }
   
   .particle {
