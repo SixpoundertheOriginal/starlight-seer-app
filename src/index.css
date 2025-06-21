@@ -1,94 +1,43 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 10 1% 9%;
+    --foreground: 48 96% 89%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 10 4% 6%;
+    --card-foreground: 48 96% 89%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 10 4% 6%;
+    --popover-foreground: 48 96% 89%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 45 93% 47%;
+    --primary-foreground: 10 1% 9%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 253 31% 17%;
+    --secondary-foreground: 48 96% 89%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 253 31% 17%;
+    --muted-foreground: 264 12% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 253 31% 17%;
+    --accent-foreground: 48 96% 89%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 253 31% 17%;
+    --input: 253 31% 17%;
+    --ring: 45 93% 47%;
 
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 0.75rem;
   }
 }
 
@@ -98,6 +47,77 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-cosmic-gradient text-foreground font-serif;
+    font-family: 'Crimson Text', serif;
+    min-height: 100vh;
+    background-attachment: fixed;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+@layer components {
+  .tarot-card {
+    @apply relative w-32 h-48 md:w-40 md:h-60 bg-gradient-to-br from-mystical-purple to-mystical-dark;
+    @apply border-2 border-gold-400/30 rounded-lg cursor-pointer;
+    @apply transition-all duration-300 hover:border-gold-400/60;
+    @apply backdrop-blur-sm;
+    transform-style: preserve-3d;
+  }
+
+  .tarot-card:hover {
+    @apply animate-glow-pulse scale-105;
+  }
+
+  .tarot-card-back {
+    @apply absolute inset-0 w-full h-full bg-gradient-to-br from-cosmic-800 to-cosmic-950;
+    @apply border-2 border-gold-400/50 rounded-lg;
+    @apply flex items-center justify-center;
+    backface-visibility: hidden;
+  }
+
+  .tarot-card-front {
+    @apply absolute inset-0 w-full h-full bg-gradient-to-br from-gold-50 to-gold-100;
+    @apply border-2 border-gold-400 rounded-lg;
+    @apply flex flex-col items-center justify-center p-4;
+    @apply text-mystical-dark;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+  }
+
+  .cosmic-text {
+    @apply bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 bg-clip-text text-transparent;
+    @apply font-bold tracking-wide;
+  }
+
+  .mystical-border {
+    @apply border border-gold-400/30 bg-mystical-purple/20 backdrop-blur-sm;
+    @apply hover:border-gold-400/60 transition-all duration-300;
+  }
+
+  .floating-stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .star {
+    position: absolute;
+    background: #fbbf24;
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .star:nth-child(1) { top: 20%; left: 10%; width: 2px; height: 2px; animation-delay: 0s; }
+  .star:nth-child(2) { top: 40%; left: 80%; width: 1px; height: 1px; animation-delay: 1s; }
+  .star:nth-child(3) { top: 60%; left: 20%; width: 3px; height: 3px; animation-delay: 2s; }
+  .star:nth-child(4) { top: 80%; left: 70%; width: 2px; height: 2px; animation-delay: 3s; }
+  .star:nth-child(5) { top: 10%; left: 60%; width: 1px; height: 1px; animation-delay: 4s; }
+  .star:nth-child(6) { top: 70%; left: 40%; width: 2px; height: 2px; animation-delay: 5s; }
 }

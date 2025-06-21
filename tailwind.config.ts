@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,15 +53,38 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+				// Mystical color palette
+				cosmic: {
+					50: '#f8f7ff',
+					100: '#f0edff',
+					200: '#e4ddff',
+					300: '#d1c2ff',
+					400: '#b794ff',
+					500: '#9d5eff',
+					600: '#8b3aff',
+					700: '#7a28f7',
+					800: '#6622d3',
+					900: '#541bae',
+					950: '#36107a'
+				},
+				gold: {
+					50: '#fffbeb',
+					100: '#fef3c7',
+					200: '#fde68a',
+					300: '#fcd34d',
+					400: '#fbbf24',
+					500: '#f59e0b',
+					600: '#d97706',
+					700: '#b45309',
+					800: '#92400e',
+					900: '#78350f',
+					950: '#451a03'
+				},
+				mystical: {
+					dark: '#0a0118',
+					purple: '#1a0b2e',
+					deepBlue: '#16213e',
+					midnight: '#0f0f23'
 				}
 			},
 			borderRadius: {
@@ -84,11 +108,40 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'card-flip': {
+					'0%': { transform: 'perspective(1000px) rotateY(0deg)' },
+					'50%': { transform: 'perspective(1000px) rotateY(90deg)' },
+					'100%': { transform: 'perspective(1000px) rotateY(0deg)' }
+				},
+				'glow-pulse': {
+					'0%, 100%': { 
+						boxShadow: '0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(251, 191, 36, 0.1)' 
+					},
+					'50%': { 
+						boxShadow: '0 0 30px rgba(251, 191, 36, 0.5), 0 0 60px rgba(251, 191, 36, 0.2)' 
+					}
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '200% 0' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'card-flip': 'card-flip 0.8s ease-in-out',
+				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+				'shimmer': 'shimmer 2s linear infinite',
+				'float': 'float 3s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'cosmic-gradient': 'linear-gradient(135deg, #0a0118 0%, #1a0b2e 25%, #16213e 50%, #0f0f23 100%)',
+				'gold-shimmer': 'linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.4), transparent)'
 			}
 		}
 	},
