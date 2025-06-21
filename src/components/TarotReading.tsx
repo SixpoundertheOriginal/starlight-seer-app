@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import TarotCard from './TarotCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Star } from 'lucide-react';
+import { Star, Sparkles, Moon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SelectedCard {
@@ -64,9 +63,7 @@ const TarotReading: React.FC = () => {
     setIsGeneratingReading(true);
     
     try {
-      // In a real implementation, you would make an API call to OpenAI here
-      // For now, we'll simulate with a timeout and generate a mystical reading
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       const cardNames = selectedCards.map(card => card.name).join(', ');
       const mysticalReading = generateMysticalReading(selectedCards);
@@ -74,7 +71,7 @@ const TarotReading: React.FC = () => {
       setReading(mysticalReading);
       
       toast({
-        title: "Your reading is complete",
+        title: "✨ Your reading is complete",
         description: `The cards ${cardNames} have spoken...`,
       });
     } catch (error) {
@@ -120,27 +117,43 @@ const TarotReading: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cosmic-gradient py-8 px-4">
-      <div className="floating-stars">
-        <div className="star"></div>
-        <div className="star"></div>
-        <div className="star"></div>
-        <div className="star"></div>
-        <div className="star"></div>
-        <div className="star"></div>
+    <div className="min-h-screen bg-cosmic-gradient py-12 px-4 relative">
+      {/* Enhanced Background Effects */}
+      <div className="constellation-bg"></div>
+      <div className="floating-particles">
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
       </div>
 
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold cosmic-text mb-4 font-serif">
-            Mystical Tarot
-          </h1>
-          <p className="text-gold-200 text-lg md:text-xl max-w-2xl mx-auto">
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Enhanced Header */}
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center mb-6">
+            <Moon className="w-8 h-8 text-gold-400 mr-4 animate-pulse" />
+            <h1 className="text-5xl md:text-7xl font-bold cosmic-text font-serif">
+              Mystical Tarot
+            </h1>
+            <Sparkles className="w-8 h-8 text-gold-400 ml-4 animate-pulse" style={{ animationDelay: '0.5s' }} />
+          </div>
+          <p className="text-gold-200 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
             Select up to three cards to reveal the cosmic wisdom that awaits you
           </p>
+          <div className="flex items-center justify-center mt-6 space-x-4">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+            <Star className="w-6 h-6 text-gold-400 animate-pulse" />
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-4 mb-8 justify-items-center">
+        {/* Enhanced Card Grid */}
+        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-6 mb-12 justify-items-center px-4">
           {tarotCards.map((cardName, index) => (
             <TarotCard
               key={index}
@@ -153,40 +166,47 @@ const TarotReading: React.FC = () => {
           ))}
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
+        {/* Enhanced Control Buttons */}
+        <div className="flex flex-col md:flex-row gap-6 justify-center mb-12">
           <Button
             onClick={generateReading}
             disabled={selectedCards.length === 0 || isGeneratingReading}
-            className="bg-gold-600 hover:bg-gold-700 text-mystical-dark font-semibold px-8 py-3 text-lg"
+            className="mystical-button text-mystical-dark font-semibold px-10 py-4 text-xl rounded-full relative"
           >
             {isGeneratingReading ? (
               <>
-                <Star className="w-5 h-5 mr-2 animate-spin" />
-                Consulting the Stars...
+                <Star className="w-6 h-6 mr-3 animate-spin" />
+                Consulting the Cosmic Forces...
               </>
             ) : (
-              'Generate Reading'
+              <>
+                <Sparkles className="w-6 h-6 mr-3" />
+                Generate Reading
+              </>
             )}
           </Button>
           
           <Button
             onClick={resetReading}
             variant="outline"
-            className="border-gold-400/50 text-gold-200 hover:bg-gold-400/10 px-8 py-3 text-lg"
+            className="border-gold-400/50 text-gold-200 hover:bg-gold-400/10 px-10 py-4 text-xl rounded-full backdrop-blur-sm"
           >
+            <Moon className="w-6 h-6 mr-3" />
             Reset Cards
           </Button>
         </div>
 
+        {/* Enhanced Selected Cards Display */}
         {selectedCards.length > 0 && (
-          <Card className="mystical-border p-6 mb-8">
-            <h3 className="text-xl font-semibold cosmic-text mb-4">Selected Cards:</h3>
-            <div className="flex flex-wrap gap-2">
+          <Card className="mystical-border p-8 mb-12 rounded-2xl">
+            <h3 className="text-2xl font-semibold cosmic-text mb-6 text-center">Selected Cards</h3>
+            <div className="flex flex-wrap gap-4 justify-center">
               {selectedCards.map((card, index) => (
                 <span
                   key={card.id}
-                  className="bg-gold-400/20 text-gold-200 px-3 py-1 rounded-full text-sm border border-gold-400/30"
+                  className="selected-card-badge"
                 >
+                  <Star className="w-4 h-4 mr-2 text-gold-400" />
                   {card.name}
                 </span>
               ))}
@@ -194,11 +214,19 @@ const TarotReading: React.FC = () => {
           </Card>
         )}
 
+        {/* Enhanced Reading Display */}
         {reading && (
-          <Card className="mystical-border p-8">
-            <h2 className="text-2xl font-bold cosmic-text mb-6 text-center">Your Reading</h2>
+          <Card className="reading-container p-12 rounded-3xl">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold cosmic-text mb-4">Your Cosmic Reading</h2>
+              <div className="flex items-center justify-center space-x-4">
+                <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+                <Sparkles className="w-6 h-6 text-gold-400" />
+                <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+              </div>
+            </div>
             <div className="prose prose-invert max-w-none">
-              <p className="text-gold-100 leading-relaxed whitespace-pre-line text-lg">
+              <p className="text-gold-100 leading-relaxed whitespace-pre-line text-lg md:text-xl reading-text">
                 {reading}
               </p>
             </div>

@@ -51,6 +51,7 @@
     font-family: 'Crimson Text', serif;
     min-height: 100vh;
     background-attachment: fixed;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -60,64 +61,330 @@
 
 @layer components {
   .tarot-card {
-    @apply relative w-32 h-48 md:w-40 md:h-60 bg-gradient-to-br from-mystical-purple to-mystical-dark;
-    @apply border-2 border-gold-400/30 rounded-lg cursor-pointer;
-    @apply transition-all duration-300 hover:border-gold-400/60;
-    @apply backdrop-blur-sm;
+    @apply relative w-32 h-48 md:w-36 md:h-56 cursor-pointer;
+    @apply transition-all duration-500 ease-out;
     transform-style: preserve-3d;
+    perspective: 1000px;
   }
 
   .tarot-card:hover {
-    @apply animate-glow-pulse scale-105;
+    @apply scale-105;
+    transform: translateY(-8px) scale(1.05);
+    filter: drop-shadow(0 20px 40px rgba(251, 191, 36, 0.3));
   }
 
   .tarot-card-back {
-    @apply absolute inset-0 w-full h-full bg-gradient-to-br from-cosmic-800 to-cosmic-950;
-    @apply border-2 border-gold-400/50 rounded-lg;
+    @apply absolute inset-0 w-full h-full rounded-xl;
     @apply flex items-center justify-center;
+    background: linear-gradient(135deg, 
+      rgba(16, 9, 40, 0.95) 0%, 
+      rgba(45, 20, 85, 0.9) 25%, 
+      rgba(30, 15, 60, 0.95) 50%,
+      rgba(10, 5, 25, 0.98) 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
     backface-visibility: hidden;
+  }
+
+  .tarot-card-back::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: linear-gradient(45deg, 
+      rgba(251, 191, 36, 0.6), 
+      rgba(139, 58, 255, 0.4), 
+      rgba(251, 191, 36, 0.6));
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+  }
+
+  .tarot-card-back::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background: radial-gradient(circle at 50% 50%, 
+      rgba(251, 191, 36, 0.1) 0%, 
+      transparent 70%);
+    border-radius: calc(0.75rem - 4px);
+    animation: mystical-pulse 3s ease-in-out infinite;
   }
 
   .tarot-card-front {
-    @apply absolute inset-0 w-full h-full bg-gradient-to-br from-gold-50 to-gold-100;
-    @apply border-2 border-gold-400 rounded-lg;
+    @apply absolute inset-0 w-full h-full rounded-xl;
     @apply flex flex-col items-center justify-center p-4;
     @apply text-mystical-dark;
+    background: linear-gradient(135deg, 
+      rgba(254, 243, 199, 0.95) 0%, 
+      rgba(253, 230, 138, 0.9) 50%, 
+      rgba(251, 191, 36, 0.85) 100%);
+    border: 2px solid rgba(251, 191, 36, 0.8);
     transform: rotateY(180deg);
     backface-visibility: hidden;
+    box-shadow: 
+      inset 0 2px 10px rgba(251, 191, 36, 0.3),
+      0 8px 32px rgba(0, 0, 0, 0.4);
   }
 
   .cosmic-text {
-    @apply bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-gold-200 via-gold-300 to-gold-400 bg-clip-text text-transparent;
     @apply font-bold tracking-wide;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    animation: text-shimmer 4s ease-in-out infinite;
   }
 
   .mystical-border {
-    @apply border border-gold-400/30 bg-mystical-purple/20 backdrop-blur-sm;
-    @apply hover:border-gold-400/60 transition-all duration-300;
+    @apply border backdrop-blur-lg;
+    background: rgba(16, 9, 40, 0.6);
+    border-image: linear-gradient(45deg, 
+      rgba(251, 191, 36, 0.4), 
+      rgba(139, 58, 255, 0.3), 
+      rgba(251, 191, 36, 0.4)) 1;
+    @apply hover:shadow-lg transition-all duration-500;
+    position: relative;
   }
 
-  .floating-stars {
+  .mystical-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, 
+      rgba(251, 191, 36, 0.3), 
+      transparent, 
+      rgba(139, 58, 255, 0.2), 
+      transparent, 
+      rgba(251, 191, 36, 0.3));
+    border-radius: inherit;
+    z-index: -1;
+    animation: border-glow 6s linear infinite;
+  }
+
+  .floating-particles {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: -1;
+    z-index: 0;
+    overflow: hidden;
   }
 
-  .star {
+  .particle {
     position: absolute;
-    background: #fbbf24;
     border-radius: 50%;
-    animation: float 6s ease-in-out infinite;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.8) 0%, transparent 70%);
+    animation: float-particle 8s linear infinite;
   }
 
-  .star:nth-child(1) { top: 20%; left: 10%; width: 2px; height: 2px; animation-delay: 0s; }
-  .star:nth-child(2) { top: 40%; left: 80%; width: 1px; height: 1px; animation-delay: 1s; }
-  .star:nth-child(3) { top: 60%; left: 20%; width: 3px; height: 3px; animation-delay: 2s; }
-  .star:nth-child(4) { top: 80%; left: 70%; width: 2px; height: 2px; animation-delay: 3s; }
-  .star:nth-child(5) { top: 10%; left: 60%; width: 1px; height: 1px; animation-delay: 4s; }
-  .star:nth-child(6) { top: 70%; left: 40%; width: 2px; height: 2px; animation-delay: 5s; }
+  .particle:nth-child(1) { left: 10%; animation-delay: 0s; width: 3px; height: 3px; }
+  .particle:nth-child(2) { left: 20%; animation-delay: 1s; width: 2px; height: 2px; }
+  .particle:nth-child(3) { left: 30%; animation-delay: 2s; width: 4px; height: 4px; }
+  .particle:nth-child(4) { left: 40%; animation-delay: 3s; width: 2px; height: 2px; }
+  .particle:nth-child(5) { left: 50%; animation-delay: 4s; width: 3px; height: 3px; }
+  .particle:nth-child(6) { left: 60%; animation-delay: 5s; width: 2px; height: 2px; }
+  .particle:nth-child(7) { left: 70%; animation-delay: 6s; width: 4px; height: 4px; }
+  .particle:nth-child(8) { left: 80%; animation-delay: 7s; width: 3px; height: 3px; }
+  .particle:nth-child(9) { left: 90%; animation-delay: 8s; width: 2px; height: 2px; }
+
+  .constellation-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+    background-image: 
+      radial-gradient(2px 2px at 20% 30%, rgba(251, 191, 36, 0.3), transparent),
+      radial-gradient(2px 2px at 40% 70%, rgba(139, 58, 255, 0.2), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(251, 191, 36, 0.4), transparent),
+      radial-gradient(1px 1px at 60% 10%, rgba(251, 191, 36, 0.2), transparent);
+    background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+    animation: constellation-twinkle 10s ease-in-out infinite;
+  }
+
+  .reading-container {
+    @apply relative;
+    background: linear-gradient(135deg, 
+      rgba(16, 9, 40, 0.95) 0%, 
+      rgba(30, 15, 60, 0.9) 50%, 
+      rgba(10, 5, 25, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .reading-text {
+    animation: typewriter 2s ease-out;
+  }
+
+  .mystical-button {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, 
+      rgba(251, 191, 36, 0.9) 0%, 
+      rgba(245, 158, 11, 0.8) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.6);
+    box-shadow: 
+      0 4px 15px rgba(251, 191, 36, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .mystical-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.3), 
+      transparent);
+    transition: left 0.5s;
+  }
+
+  .mystical-button:hover::before {
+    left: 100%;
+  }
+
+  .mystical-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 20px rgba(251, 191, 36, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .selected-card-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: rgba(251, 191, 36, 0.9);
+    backdrop-filter: blur(10px);
+    animation: fade-in-up 0.5s ease-out;
+  }
+}
+
+@keyframes mystical-pulse {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes text-shimmer {
+  0%, 100% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes border-glow {
+  0% { 
+    background-position: 0% 50%;
+  }
+  100% { 
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes constellation-twinkle {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes card-flip {
+  0% { transform: perspective(1000px) rotateY(0deg); }
+  50% { transform: perspective(1000px) rotateY(90deg); }
+  100% { transform: perspective(1000px) rotateY(0deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(251, 191, 36, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.5), 0 0 60px rgba(251, 191, 36, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .tarot-card {
+    @apply w-28 h-42;
+  }
+  
+  .particle {
+    width: 2px !important;
+    height: 2px !important;
+  }
+  
+  .constellation-bg {
+    background-size: 300px 300px, 200px 200px, 150px 150px, 100px 100px;
+  }
 }
