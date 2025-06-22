@@ -13,7 +13,7 @@ import ReadingHistory from './ReadingHistory';
 import DeckSelector from './DeckSelector';
 import { Button } from '@/components/ui/button';
 import { History, Settings } from 'lucide-react';
-import { TarotReading } from '@/types/tarot';
+import { TarotReading, ReadingType } from '@/types/tarot';
 
 const ReadingContainer: React.FC = () => {
   const [isShuffling, setIsShuffling] = useState(false);
