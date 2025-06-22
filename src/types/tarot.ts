@@ -34,4 +34,4 @@ export interface TarotReading {
   interpretation: string;
 }
 
-export type ReadingType = 'single' | 'three-card' | 'celtic-cross';
+export type ReadingType = 'single' | 'three-card' | 'celtic-cross' | 'relationship';

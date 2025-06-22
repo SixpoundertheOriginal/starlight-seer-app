@@ -72,7 +72,7 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
       interpretation += position.isReversed 
         ? "In its reversed state, this card whispers of inner reflection and the need to look within for hidden truths. The universe asks you to pause and consider what may be blocking your natural flow."
         : "Standing upright, this card channels pure cosmic energy, illuminating your path with divine guidance. Trust in the wisdom it offers as you step forward.";
-    } else {
+    } else if (positions.length <= 5) {
       positions.forEach((position, index) => {
         const card = position.card!;
         const meaning = position.isReversed ? card.reversedMeaning : card.uprightMeaning;
@@ -81,9 +81,28 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
         interpretation += `${meaning}\n\n`;
       });
 
-      interpretation += "These sacred cards form a constellation of wisdom, each lending its voice to the cosmic symphony of your journey. ";
-      interpretation += "The past has woven the threads of your story, the present offers the loom of opportunity, ";
-      interpretation += "and the future sparkles with infinite potential waiting to be shaped by your conscious choices.\n\n";
+      if (positions.length === 3) {
+        interpretation += "These sacred cards form a constellation of wisdom, each lending its voice to the cosmic symphony of your journey. ";
+        interpretation += "The past has woven the threads of your story, the present offers the loom of opportunity, ";
+        interpretation += "and the future sparkles with infinite potential waiting to be shaped by your conscious choices.\n\n";
+      } else {
+        interpretation += "These cards dance together in divine harmony, revealing the intricate patterns of energy that surround your question. ";
+        interpretation += "Each position offers a unique perspective on your path forward.\n\n";
+      }
+    } else {
+      // Celtic Cross or other large spreads
+      const keyPositions = positions.slice(0, 3);
+      keyPositions.forEach((position) => {
+        const card = position.card!;
+        const meaning = position.isReversed ? card.reversedMeaning : card.uprightMeaning;
+        
+        interpretation += `**${position.name}**: ${card.name}${position.isReversed ? ' (Reversed)' : ''}\n`;
+        interpretation += `${meaning}\n\n`;
+      });
+      
+      interpretation += "This comprehensive spread reveals layers of wisdom across multiple dimensions of your experience. ";
+      interpretation += "The remaining cards provide nuanced insights into the external influences, your inner world, and the ultimate synthesis of all energies at play. ";
+      interpretation += "Together, they form a complete mandala of guidance for your journey ahead.\n\n";
     }
 
     interpretation += "Remember, dear seeker, that you are both the author and the protagonist of your story. The cards illuminate the path, but your heart holds the compass. May this reading serve as a gentle guide as you dance with the mysteries of existence.";
@@ -101,7 +120,11 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      const spread = { ...SPREADS[selectedSpread === 'single' ? 'single' : 'threeCard'] };
+      const spreadKey = selectedSpread === 'single' ? 'single' : 
+                       selectedSpread === 'three-card' ? 'threeCard' :
+                       selectedSpread === 'celtic-cross' ? 'celticCross' : 'relationship';
+      
+      const spread = { ...SPREADS[spreadKey] };
       const cardCount = spread.positions.length;
       const drawnCards = getCardsFromSelectedDeck(cardCount);
       

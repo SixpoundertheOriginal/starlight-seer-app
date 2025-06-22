@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Star, Sparkles, Moon } from 'lucide-react';
+import { Star, Sparkles, Moon, Cross, Heart } from 'lucide-react';
 import { ReadingType } from '@/types/tarot';
 
 interface SpreadSelectorProps {
@@ -22,19 +22,37 @@ const SpreadSelector: React.FC<SpreadSelectorProps> = React.memo(({
       name: 'Single Card',
       description: 'One card for daily guidance or quick insight',
       icon: Star,
-      cards: 1
+      cards: 1,
+      difficulty: 'Beginner'
     },
     {
       type: 'three-card' as ReadingType,
       name: 'Past, Present, Future',
       description: 'Three cards revealing the flow of time and energy',
       icon: Moon,
-      cards: 3
+      cards: 3,
+      difficulty: 'Beginner'
+    },
+    {
+      type: 'relationship' as ReadingType,
+      name: 'Relationship Insight',
+      description: 'Five cards exploring connection and dynamics',
+      icon: Heart,
+      cards: 5,
+      difficulty: 'Intermediate'
+    },
+    {
+      type: 'celtic-cross' as ReadingType,
+      name: 'Celtic Cross',
+      description: 'Comprehensive 10-card spread for deep insight',
+      icon: Cross,
+      cards: 10,
+      difficulty: 'Advanced'
     }
   ];
 
   return (
-    <div className="max-w-4xl mx-auto mb-12">
+    <div className="max-w-6xl mx-auto mb-12">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold cosmic-text mb-4">Choose Your Spread</h2>
         <p className="text-gold-200 text-lg">
@@ -42,7 +60,7 @@ const SpreadSelector: React.FC<SpreadSelectorProps> = React.memo(({
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {spreads.map((spread) => {
           const Icon = spread.icon;
           const isSelected = selectedSpread === spread.type;
@@ -72,12 +90,22 @@ const SpreadSelector: React.FC<SpreadSelectorProps> = React.memo(({
                   {spread.description}
                 </p>
                 
-                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
-                  isSelected
-                    ? 'bg-gold-400/20 text-gold-400 border border-gold-400/30'
-                    : 'bg-gold-400/10 text-gold-300 border border-gold-400/20'
-                }`}>
-                  {spread.cards} Card{spread.cards > 1 ? 's' : ''}
+                <div className="space-y-2">
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                    isSelected
+                      ? 'bg-gold-400/20 text-gold-400 border border-gold-400/30'
+                      : 'bg-gold-400/10 text-gold-300 border border-gold-400/20'
+                  }`}>
+                    {spread.cards} Card{spread.cards > 1 ? 's' : ''}
+                  </div>
+                  
+                  <div className={`block text-xs px-2 py-1 rounded-full ${
+                    spread.difficulty === 'Beginner' ? 'bg-green-400/20 text-green-400' :
+                    spread.difficulty === 'Intermediate' ? 'bg-yellow-400/20 text-yellow-400' :
+                    'bg-red-400/20 text-red-400'
+                  }`}>
+                    {spread.difficulty}
+                  </div>
                 </div>
               </div>
             </Card>

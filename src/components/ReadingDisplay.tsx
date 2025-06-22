@@ -10,6 +10,190 @@ interface ReadingDisplayProps {
 }
 
 const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) => {
+  const renderCardLayout = () => {
+    const { spread } = reading;
+    
+    if (spread.id === 'single-card') {
+      return (
+        <div className="text-center">
+          <CardDisplay
+            card={spread.positions[0].card!}
+            position={spread.positions[0].name}
+            isReversed={spread.positions[0].isReversed}
+            isFlipped={true}
+            className="mx-auto"
+          />
+        </div>
+      );
+    }
+    
+    if (spread.id === 'three-card') {
+      return (
+        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {spread.positions.map((position) => (
+            <div key={position.id} className="text-center">
+              <CardDisplay
+                card={position.card!}
+                position={position.name}
+                isReversed={position.isReversed}
+                isFlipped={true}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    if (spread.id === 'relationship') {
+      return (
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 gap-8 mb-8">
+            <CardDisplay
+              card={spread.positions[0].card!}
+              position={spread.positions[0].name}
+              isReversed={spread.positions[0].isReversed}
+              isFlipped={true}
+            />
+            <CardDisplay
+              card={spread.positions[1].card!}
+              position={spread.positions[1].name}
+              isReversed={spread.positions[1].isReversed}
+              isFlipped={true}
+            />
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {spread.positions.slice(2).map((position) => (
+              <div key={position.id} className="text-center">
+                <CardDisplay
+                  card={position.card!}
+                  position={position.name}
+                  isReversed={position.isReversed}
+                  isFlipped={true}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    
+    if (spread.id === 'celtic-cross') {
+      const positions = spread.positions;
+      return (
+        <div className="max-w-6xl mx-auto">
+          {/* Celtic Cross Layout */}
+          <div className="relative">
+            {/* Cross Formation */}
+            <div className="grid grid-cols-3 gap-4 mb-8" style={{ gridTemplateRows: 'auto auto auto auto auto' }}>
+              {/* Top */}
+              <div></div>
+              <div className="flex justify-center">
+                <CardDisplay
+                  card={positions[2].card!}
+                  position={positions[2].name}
+                  isReversed={positions[2].isReversed}
+                  isFlipped={true}
+                />
+              </div>
+              <div></div>
+              
+              {/* Middle Row */}
+              <div className="flex justify-center">
+                <CardDisplay
+                  card={positions[6].card!}
+                  position={positions[6].name}
+                  isReversed={positions[6].isReversed}
+                  isFlipped={true}
+                />
+              </div>
+              <div className="relative flex justify-center">
+                <CardDisplay
+                  card={positions[0].card!}
+                  position={positions[0].name}
+                  isReversed={positions[0].isReversed}
+                  isFlipped={true}
+                />
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <CardDisplay
+                    card={positions[1].card!}
+                    position={positions[1].name}
+                    isReversed={positions[1].isReversed}
+                    isFlipped={true}
+                    className="transform rotate-90 scale-75 opacity-90"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <CardDisplay
+                  card={positions[7].card!}
+                  position={positions[7].name}
+                  isReversed={positions[7].isReversed}
+                  isFlipped={true}
+                />
+              </div>
+              
+              {/* Bottom */}
+              <div></div>
+              <div className="flex justify-center">
+                <CardDisplay
+                  card={positions[3].card!}
+                  position={positions[3].name}
+                  isReversed={positions[3].isReversed}
+                  isFlipped={true}
+                />
+              </div>
+              <div></div>
+            </div>
+            
+            {/* Staff Cards */}
+            <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto">
+              <CardDisplay
+                card={positions[4].card!}
+                position={positions[4].name}
+                isReversed={positions[4].isReversed}
+                isFlipped={true}
+              />
+              <CardDisplay
+                card={positions[5].card!}
+                position={positions[5].name}
+                isReversed={positions[5].isReversed}
+                isFlipped={true}
+              />
+              <CardDisplay
+                card={positions[8].card!}
+                position={positions[8].name}
+                isReversed={positions[8].isReversed}
+                isFlipped={true}
+              />
+              <CardDisplay
+                card={positions[9].card!}
+                position={positions[9].name}
+                isReversed={positions[9].isReversed}
+                isFlipped={true}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Default grid layout for other spreads
+    return (
+      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        {spread.positions.map((position) => (
+          <div key={position.id} className="text-center">
+            <CardDisplay
+              card={position.card!}
+              position={position.name}
+              isReversed={position.isReversed}
+              isFlipped={true}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-8">
       {/* Question Display */}
@@ -26,30 +210,7 @@ const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) =
 
       {/* Cards Display */}
       <div className="grid gap-8 justify-items-center">
-        {reading.spread.id === 'single-card' ? (
-          <div className="text-center">
-            <CardDisplay
-              card={reading.spread.positions[0].card!}
-              position={reading.spread.positions[0].name}
-              isReversed={reading.spread.positions[0].isReversed}
-              isFlipped={true}
-              className="mx-auto"
-            />
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {reading.spread.positions.map((position, index) => (
-              <div key={position.id} className="text-center">
-                <CardDisplay
-                  card={position.card!}
-                  position={position.name}
-                  isReversed={position.isReversed}
-                  isFlipped={true}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+        {renderCardLayout()}
       </div>
 
       {/* Reading Interpretation */}
