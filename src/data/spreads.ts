@@ -1,7 +1,8 @@
+
 import { TarotSpread } from '@/types/tarot';
 
 export const SINGLE_CARD_SPREAD: TarotSpread = {
-  id: 'single-card',
+  id: 'single',
   name: 'Single Card Draw',
   description: 'A simple one-card reading for daily guidance or specific questions.',
   positions: [

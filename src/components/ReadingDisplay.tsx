@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { TarotReading } from '@/types/tarot';
@@ -25,7 +24,7 @@ const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) =
   const renderCardLayout = () => {
     const { spread } = reading;
     
-    if (spread.id === 'single-card') {
+    if (spread.id === 'single') {
       return (
         <div className="text-center">
           <CardDisplay
