@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { TarotCard } from '@/types/tarot';
-import { Star, Sparkles, RotateCcw } from 'lucide-react';
+import { Star, Sparkles, RotateCcw, Image } from 'lucide-react';
 
 interface CardDisplayProps {
   card: TarotCard;
@@ -23,6 +23,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   className = ''
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleClick = () => {
     if (disabled || isAnimating || !onFlip) return;
@@ -32,6 +33,10 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
       onFlip();
       setIsAnimating(false);
     }, 400);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
   };
 
   return (
@@ -85,40 +90,82 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
         {/* Card Front */}
         <div className={`tarot-card-front ${isFlipped ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}>
           <div className="text-center h-full flex flex-col justify-center items-center relative">
-            {/* Card name and suit info */}
-            <div className="text-xs md:text-sm font-bold mb-2 text-mystical-dark/70 uppercase tracking-wide">
-              {card.suit && `${card.suit} • `}{card.type === 'major' ? 'Major Arcana' : 'Minor Arcana'}
-            </div>
-            
-            <div className="text-sm md:text-lg font-bold mb-3 font-serif text-mystical-dark leading-tight px-2 text-center">
-              {card.name}
-            </div>
-            
-            {/* Card symbol */}
-            <div className="mb-3 flex items-center justify-center">
-              {card.suit === 'cups' && <div className="text-2xl">♱</div>}
-              {card.suit === 'pentacles' && <div className="text-2xl">⬟</div>}
-              {card.suit === 'swords' && <div className="text-2xl">⚔</div>}
-              {card.suit === 'wands' && <div className="text-2xl">⚡</div>}
-              {card.type === 'major' && <Star className="w-5 h-5 md:w-6 md:h-6 text-gold-700" />}
-            </div>
-            
-            {/* Keywords */}
-            <div className="text-xs text-mystical-dark/60 text-center px-2 leading-tight">
-              {card.keywords.slice(0, 3).join(' • ')}
-            </div>
-            
-            {/* Reversed indicator */}
-            {isReversed && (
-              <div className="absolute top-2 right-2">
-                <RotateCcw className="w-3 h-3 text-gold-600/60" />
+            {/* Custom Image or Default Layout */}
+            {card.imageUrl && !imageError ? (
+              <div className="w-full h-full relative rounded-lg overflow-hidden">
+                <img 
+                  src={card.imageUrl}
+                  alt={card.name}
+                  className="w-full h-full object-cover"
+                  onError={handleImageError}
+                  loading="lazy"
+                />
+                
+                {/* Image overlay with card info */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30">
+                  <div className="absolute top-2 left-2 right-2">
+                    <div className="text-xs font-bold text-white/90 uppercase tracking-wide text-center">
+                      {card.suit && `${card.suit} • `}{card.type === 'major' ? 'Major Arcana' : 'Minor Arcana'}
+                    </div>
+                  </div>
+                  
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <div className="text-sm font-bold font-serif text-white text-center mb-1">
+                      {card.name}
+                    </div>
+                    <div className="text-xs text-white/80 text-center leading-tight">
+                      {card.keywords.slice(0, 3).join(' • ')}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Reversed indicator for image cards */}
+                {isReversed && (
+                  <div className="absolute top-2 right-2">
+                    <RotateCcw className="w-3 h-3 text-white/80" />
+                  </div>
+                )}
               </div>
+            ) : (
+              // Default text-based layout for cards without images
+              <>
+                {/* Card name and suit info */}
+                <div className="text-xs md:text-sm font-bold mb-2 text-mystical-dark/70 uppercase tracking-wide">
+                  {card.suit && `${card.suit} • `}{card.type === 'major' ? 'Major Arcana' : 'Minor Arcana'}
+                </div>
+                
+                <div className="text-sm md:text-lg font-bold mb-3 font-serif text-mystical-dark leading-tight px-2 text-center">
+                  {card.name}
+                </div>
+                
+                {/* Card symbol */}
+                <div className="mb-3 flex items-center justify-center">
+                  {card.suit === 'cups' && <div className="text-2xl">♱</div>}
+                  {card.suit === 'pentacles' && <div className="text-2xl">⬟</div>}
+                  {card.suit === 'swords' && <div className="text-2xl">⚔</div>}
+                  {card.suit === 'wands' && <div className="text-2xl">⚡</div>}
+                  {card.type === 'major' && !card.imageUrl && <Star className="w-5 h-5 md:w-6 md:h-6 text-gold-700" />}
+                  {card.type === 'major' && card.imageUrl && imageError && <Image className="w-5 h-5 md:w-6 md:h-6 text-gold-700" />}
+                </div>
+                
+                {/* Keywords */}
+                <div className="text-xs text-mystical-dark/60 text-center px-2 leading-tight">
+                  {card.keywords.slice(0, 3).join(' • ')}
+                </div>
+                
+                {/* Reversed indicator */}
+                {isReversed && (
+                  <div className="absolute top-2 right-2">
+                    <RotateCcw className="w-3 h-3 text-gold-600/60" />
+                  </div>
+                )}
+                
+                {/* Corner decorations */}
+                <div className="absolute top-2 left-2 w-1 h-1 bg-gold-600/40 rounded-full"></div>
+                <div className="absolute bottom-2 left-2 w-1 h-1 bg-gold-600/40 rounded-full"></div>
+                <div className="absolute bottom-2 right-2 w-1 h-1 bg-gold-600/40 rounded-full"></div>
+              </>
             )}
-            
-            {/* Corner decorations */}
-            <div className="absolute top-2 left-2 w-1 h-1 bg-gold-600/40 rounded-full"></div>
-            <div className="absolute bottom-2 left-2 w-1 h-1 bg-gold-600/40 rounded-full"></div>
-            <div className="absolute bottom-2 right-2 w-1 h-1 bg-gold-600/40 rounded-full"></div>
           </div>
         </div>
       </div>

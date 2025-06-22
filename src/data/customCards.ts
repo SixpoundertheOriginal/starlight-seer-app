@@ -1,7 +1,7 @@
 
 import { TarotCard } from '@/types/tarot';
 
-// Your 15 custom tarot cards - you can modify these with your actual card data
+// Your 15 custom tarot cards with image mappings for the 10 uploaded images
 export const customCards: TarotCard[] = [
   {
     id: 'custom-1',
@@ -10,7 +10,8 @@ export const customCards: TarotCard[] = [
     keywords: ['technology', 'wisdom', 'connectivity'],
     uprightMeaning: 'Embrace the digital age and use technology as a tool for spiritual growth and connection.',
     reversedMeaning: 'Technology may be creating barriers to authentic connection. Seek balance between digital and real worlds.',
-    description: 'A mystical figure surrounded by flowing data streams and glowing screens, representing the harmony between ancient wisdom and modern technology.'
+    description: 'A mystical figure surrounded by flowing data streams and glowing screens, representing the harmony between ancient wisdom and modern technology.',
+    imageUrl: '/cards/image1.jpg'
   },
   {
     id: 'custom-2',
@@ -19,7 +20,8 @@ export const customCards: TarotCard[] = [
     keywords: ['creativity', 'inspiration', 'innovation'],
     uprightMeaning: 'Your creative energies are at their peak. Trust your artistic vision and bring new ideas to life.',
     reversedMeaning: 'Creative blocks may be hindering your progress. Step back and allow inspiration to flow naturally.',
-    description: 'A brilliant burst of multicolored light emanating from an artist\'s hands, illuminating the canvas of possibility.'
+    description: 'A brilliant burst of multicolored light emanating from an artist\'s hands, illuminating the canvas of possibility.',
+    imageUrl: '/cards/image2.jpg'
   },
   {
     id: 'custom-3',
@@ -28,7 +30,8 @@ export const customCards: TarotCard[] = [
     keywords: ['playfulness', 'wonder', 'innocence'],
     uprightMeaning: 'Reconnect with your sense of wonder and playfulness. Approach challenges with childlike curiosity.',
     reversedMeaning: 'You may be taking life too seriously. Remember the joy and freedom of your younger self.',
-    description: 'A luminous child-like figure dancing among stars, representing pure joy and untainted perception.'
+    description: 'A luminous child-like figure dancing among stars, representing pure joy and untainted perception.',
+    imageUrl: '/cards/image3.jpg'
   },
   {
     id: 'custom-4',
@@ -37,7 +40,8 @@ export const customCards: TarotCard[] = [
     keywords: ['shadow work', 'integration', 'acceptance'],
     uprightMeaning: 'Face your shadow aspects with courage. Integration of all parts of yourself leads to wholeness.',
     reversedMeaning: 'Avoiding your shadow aspects may be creating inner turmoil. Gentle self-examination is needed.',
-    description: 'A figure walking between light and darkness, embracing both aspects with serene acceptance.'
+    description: 'A figure walking between light and darkness, embracing both aspects with serene acceptance.',
+    imageUrl: '/cards/image4.jpg'
   },
   {
     id: 'custom-5',
@@ -46,7 +50,8 @@ export const customCards: TarotCard[] = [
     keywords: ['transformation', 'sudden change', 'breakthrough'],
     uprightMeaning: 'A major breakthrough or transformation is imminent. Trust the process of rapid change.',
     reversedMeaning: 'Resistance to change may be blocking your progress. Release control and allow natural evolution.',
-    description: 'A figure leaping through swirling portals of light, representing quantum shifts in consciousness.'
+    description: 'A figure leaping through swirling portals of light, representing quantum shifts in consciousness.',
+    imageUrl: '/cards/image5.jpg'
   },
   {
     id: 'custom-6',
@@ -55,7 +60,8 @@ export const customCards: TarotCard[] = [
     keywords: ['emotional connection', 'empathy', 'unity'],
     uprightMeaning: 'Deep emotional connections are forming. Your empathy creates bridges between hearts.',
     reversedMeaning: 'Emotional walls may be preventing genuine connection. Open your heart to vulnerability.',
-    description: 'A radiant bridge of light connecting two hearts, with energy flowing in both directions.'
+    description: 'A radiant bridge of light connecting two hearts, with energy flowing in both directions.',
+    imageUrl: '/cards/image6.jpg'
   },
   {
     id: 'custom-7',
@@ -64,7 +70,8 @@ export const customCards: TarotCard[] = [
     keywords: ['timing', 'patience', 'divine timing'],
     uprightMeaning: 'Trust in divine timing. Everything unfolds at the perfect moment for your highest good.',
     reversedMeaning: 'Impatience may be creating unnecessary stress. Surrender to the natural flow of time.',
-    description: 'An ancient figure holding an hourglass with swirling galaxies inside, representing cosmic timing.'
+    description: 'An ancient figure holding an hourglass with swirling galaxies inside, representing cosmic timing.',
+    imageUrl: '/cards/image7.jpg'
   },
   {
     id: 'custom-8',
@@ -73,7 +80,8 @@ export const customCards: TarotCard[] = [
     keywords: ['manifestation', 'energy work', 'creation'],
     uprightMeaning: 'You have the power to weave energy into reality. Your thoughts and intentions are manifesting rapidly.',
     reversedMeaning: 'Scattered energy may be diluting your manifestation power. Focus your intentions clearly.',
-    description: 'Hands weaving threads of pure light into the fabric of reality, creating new possibilities.'
+    description: 'Hands weaving threads of pure light into the fabric of reality, creating new possibilities.',
+    imageUrl: '/cards/image8.jpg'
   },
   {
     id: 'custom-9',
@@ -82,7 +90,8 @@ export const customCards: TarotCard[] = [
     keywords: ['self-reflection', 'truth', 'authenticity'],
     uprightMeaning: 'Look within to find your authentic truth. The mirror of your soul reveals your deepest wisdom.',
     reversedMeaning: 'Self-deception or denial may be clouding your judgment. Seek honest self-reflection.',
-    description: 'A mystical mirror reflecting not the physical form, but the luminous essence of the soul.'
+    description: 'A mystical mirror reflecting not the physical form, but the luminous essence of the soul.',
+    imageUrl: '/cards/image9.jpg'
   },
   {
     id: 'custom-10',
@@ -91,7 +100,8 @@ export const customCards: TarotCard[] = [
     keywords: ['rhythm', 'flow', 'cosmic harmony'],
     uprightMeaning: 'You are in perfect harmony with the cosmic dance. Move with the rhythm of the universe.',
     reversedMeaning: 'You may be fighting against the natural flow. Relax and let the cosmic rhythm guide you.',
-    description: 'A graceful figure dancing among the stars, moving in perfect harmony with celestial rhythms.'
+    description: 'A graceful figure dancing among the stars, moving in perfect harmony with celestial rhythms.',
+    imageUrl: '/cards/image10.jpg'
   },
   {
     id: 'custom-11',

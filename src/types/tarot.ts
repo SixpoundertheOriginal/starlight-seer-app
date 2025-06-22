@@ -1,4 +1,3 @@
-
 export interface TarotCard {
   id: string;
   name: string;
@@ -9,6 +8,7 @@ export interface TarotCard {
   uprightMeaning: string;
   reversedMeaning: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface CardPosition {
