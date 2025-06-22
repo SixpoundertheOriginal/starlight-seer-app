@@ -1,15 +1,27 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { TarotReading } from '@/types/tarot';
 import { Sparkles, Star } from 'lucide-react';
 import CardDisplay from './CardDisplay';
+import { useSpreadAnimations } from '@/hooks/useSpreadAnimations';
 
 interface ReadingDisplayProps {
   reading: TarotReading;
 }
 
 const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const { getCardAnimation, getConnectionGlow } = useSpreadAnimations(
+    reading.spread.id as any, 
+    isVisible
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   const renderCardLayout = () => {
     const { spread } = reading;
     
@@ -46,24 +58,31 @@ const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) =
     
     if (spread.id === 'relationship') {
       return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto relative">
+          {/* Connection Glow Effect */}
+          <div className={`absolute top-16 left-1/2 transform -translate-x-1/2 w-32 h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent ${getConnectionGlow()}`}></div>
+          
           <div className="grid grid-cols-2 gap-8 mb-8">
-            <CardDisplay
-              card={spread.positions[0].card!}
-              position={spread.positions[0].name}
-              isReversed={spread.positions[0].isReversed}
-              isFlipped={true}
-            />
-            <CardDisplay
-              card={spread.positions[1].card!}
-              position={spread.positions[1].name}
-              isReversed={spread.positions[1].isReversed}
-              isFlipped={true}
-            />
+            <div className={getCardAnimation(0)}>
+              <CardDisplay
+                card={spread.positions[0].card!}
+                position={spread.positions[0].name}
+                isReversed={spread.positions[0].isReversed}
+                isFlipped={true}
+              />
+            </div>
+            <div className={getCardAnimation(1)}>
+              <CardDisplay
+                card={spread.positions[1].card!}
+                position={spread.positions[1].name}
+                isReversed={spread.positions[1].isReversed}
+                isFlipped={true}
+              />
+            </div>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {spread.positions.slice(2).map((position) => (
-              <div key={position.id} className="text-center">
+            {spread.positions.slice(2).map((position, index) => (
+              <div key={position.id} className={`text-center ${getCardAnimation(index + 2)}`}>
                 <CardDisplay
                   card={position.card!}
                   position={position.name}
@@ -88,32 +107,38 @@ const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) =
               {/* Top */}
               <div></div>
               <div className="flex justify-center">
-                <CardDisplay
-                  card={positions[2].card!}
-                  position={positions[2].name}
-                  isReversed={positions[2].isReversed}
-                  isFlipped={true}
-                />
+                <div className={getCardAnimation(4)}>
+                  <CardDisplay
+                    card={positions[2].card!}
+                    position={positions[2].name}
+                    isReversed={positions[2].isReversed}
+                    isFlipped={true}
+                  />
+                </div>
               </div>
               <div></div>
               
               {/* Middle Row */}
               <div className="flex justify-center">
-                <CardDisplay
-                  card={positions[6].card!}
-                  position={positions[6].name}
-                  isReversed={positions[6].isReversed}
-                  isFlipped={true}
-                />
+                <div className={getCardAnimation(2)}>
+                  <CardDisplay
+                    card={positions[6].card!}
+                    position={positions[6].name}
+                    isReversed={positions[6].isReversed}
+                    isFlipped={true}
+                  />
+                </div>
               </div>
               <div className="relative flex justify-center">
-                <CardDisplay
-                  card={positions[0].card!}
-                  position={positions[0].name}
-                  isReversed={positions[0].isReversed}
-                  isFlipped={true}
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className={getCardAnimation(0)}>
+                  <CardDisplay
+                    card={positions[0].card!}
+                    position={positions[0].name}
+                    isReversed={positions[0].isReversed}
+                    isFlipped={true}
+                  />
+                </div>
+                <div className={`absolute inset-0 flex items-center justify-center z-10 ${getCardAnimation(1)}`}>
                   <CardDisplay
                     card={positions[1].card!}
                     position={positions[1].name}
@@ -124,53 +149,43 @@ const ReadingDisplay: React.FC<ReadingDisplayProps> = React.memo(({ reading }) =
                 </div>
               </div>
               <div className="flex justify-center">
-                <CardDisplay
-                  card={positions[7].card!}
-                  position={positions[7].name}
-                  isReversed={positions[7].isReversed}
-                  isFlipped={true}
-                />
+                <div className={getCardAnimation(5)}>
+                  <CardDisplay
+                    card={positions[7].card!}
+                    position={positions[7].name}
+                    isReversed={positions[7].isReversed}
+                    isFlipped={true}
+                  />
+                </div>
               </div>
               
               {/* Bottom */}
               <div></div>
               <div className="flex justify-center">
-                <CardDisplay
-                  card={positions[3].card!}
-                  position={positions[3].name}
-                  isReversed={positions[3].isReversed}
-                  isFlipped={true}
-                />
+                <div className={getCardAnimation(3)}>
+                  <CardDisplay
+                    card={positions[3].card!}
+                    position={positions[3].name}
+                    isReversed={positions[3].isReversed}
+                    isFlipped={true}
+                  />
+                </div>
               </div>
               <div></div>
             </div>
             
             {/* Staff Cards */}
             <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto">
-              <CardDisplay
-                card={positions[4].card!}
-                position={positions[4].name}
-                isReversed={positions[4].isReversed}
-                isFlipped={true}
-              />
-              <CardDisplay
-                card={positions[5].card!}
-                position={positions[5].name}
-                isReversed={positions[5].isReversed}
-                isFlipped={true}
-              />
-              <CardDisplay
-                card={positions[8].card!}
-                position={positions[8].name}
-                isReversed={positions[8].isReversed}
-                isFlipped={true}
-              />
-              <CardDisplay
-                card={positions[9].card!}
-                position={positions[9].name}
-                isReversed={positions[9].isReversed}
-                isFlipped={true}
-              />
+              {[4, 5, 8, 9].map((posIndex, staffIndex) => (
+                <div key={positions[posIndex].id} className={getCardAnimation(staffIndex + 6)}>
+                  <CardDisplay
+                    card={positions[posIndex].card!}
+                    position={positions[posIndex].name}
+                    isReversed={positions[posIndex].isReversed}
+                    isFlipped={true}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>

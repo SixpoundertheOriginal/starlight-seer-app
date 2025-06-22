@@ -37,6 +37,165 @@
   }
 }
 
+/* Celtic Cross Animations */
+@keyframes celtic-center-reveal {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.8) rotateY(180deg);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotateY(0deg);
+  }
+}
+
+@keyframes celtic-cross-rotate {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.8) rotate(90deg);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotate(90deg);
+  }
+}
+
+@keyframes celtic-slide-left {
+  0% { 
+    opacity: 0; 
+    transform: translateX(-100px) scale(0.8);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes celtic-slide-right {
+  0% { 
+    opacity: 0; 
+    transform: translateX(100px) scale(0.8);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes celtic-slide-top {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-100px) scale(0.8);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes celtic-slide-bottom {
+  0% { 
+    opacity: 0; 
+    transform: translateY(100px) scale(0.8);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes celtic-staff-rise {
+  0% { 
+    opacity: 0; 
+    transform: translateY(60px) scale(0.9);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes celtic-cross-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+  }
+}
+
+/* Relationship Spread Animations */
+@keyframes relationship-slide-left {
+  0% { 
+    opacity: 0; 
+    transform: translateX(-120px) scale(0.8);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes relationship-slide-right {
+  0% { 
+    opacity: 0; 
+    transform: translateX(120px) scale(0.8);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes relationship-connection-glow {
+  0% { 
+    opacity: 0; 
+    transform: scaleX(0);
+  }
+  100% { 
+    opacity: 0.6; 
+    transform: scaleX(1);
+  }
+}
+
+@keyframes relationship-center-bloom {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.5) rotate(45deg);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes relationship-foundation-rise {
+  0% { 
+    opacity: 0; 
+    transform: translateY(40px) scale(0.9);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes relationship-sparkle {
+  0% { 
+    opacity: 0; 
+    transform: scale(0) rotate(0deg);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% { 
+    opacity: 0.8; 
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+/* Animation Classes */
 .animate-card-flip {
   animation: card-flip 0.8s ease-in-out;
 }
@@ -51,6 +210,64 @@
 
 .particle {
   animation: particle-float 6s ease-in-out infinite;
+}
+
+/* Celtic Cross Animation Classes */
+.celtic-center-reveal {
+  animation: celtic-center-reveal 0.8s ease-out forwards;
+}
+
+.celtic-cross-rotate {
+  animation: celtic-cross-rotate 0.6s ease-out forwards;
+}
+
+.celtic-slide-left {
+  animation: celtic-slide-left 0.7s ease-out forwards;
+}
+
+.celtic-slide-right {
+  animation: celtic-slide-right 0.7s ease-out forwards;
+}
+
+.celtic-slide-top {
+  animation: celtic-slide-top 0.7s ease-out forwards;
+}
+
+.celtic-slide-bottom {
+  animation: celtic-slide-bottom 0.7s ease-out forwards;
+}
+
+.celtic-staff-rise {
+  animation: celtic-staff-rise 0.6s ease-out forwards;
+}
+
+.celtic-cross-glow {
+  animation: celtic-cross-glow 3s ease-in-out infinite;
+}
+
+/* Relationship Animation Classes */
+.relationship-slide-left {
+  animation: relationship-slide-left 0.8s ease-out forwards;
+}
+
+.relationship-slide-right {
+  animation: relationship-slide-right 0.8s ease-out forwards;
+}
+
+.relationship-connection-glow {
+  animation: relationship-connection-glow 0.6s ease-out forwards;
+}
+
+.relationship-center-bloom {
+  animation: relationship-center-bloom 0.8s ease-out forwards;
+}
+
+.relationship-foundation-rise {
+  animation: relationship-foundation-rise 0.6s ease-out forwards;
+}
+
+.relationship-sparkle {
+  animation: relationship-sparkle 1s ease-out forwards;
 }
 
 /* Enhanced loading states */
@@ -79,4 +296,27 @@
 .tarot-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .celtic-center-reveal,
+  .celtic-cross-rotate,
+  .celtic-slide-left,
+  .celtic-slide-right,
+  .celtic-slide-top,
+  .celtic-slide-bottom,
+  .celtic-staff-rise,
+  .relationship-slide-left,
+  .relationship-slide-right,
+  .relationship-center-bloom,
+  .relationship-foundation-rise {
+    animation-duration: 0.1s;
+  }
+  
+  .celtic-cross-glow,
+  .relationship-sparkle,
+  .relationship-connection-glow {
+    animation: none;
+  }
 }
