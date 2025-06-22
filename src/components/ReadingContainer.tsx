@@ -1,4 +1,3 @@
-
 import React, { useCallback, useState } from 'react';
 import { useReadingFlow } from '@/hooks/useReadingFlow';
 import { useAIReadingGeneration } from '@/hooks/useAIReadingGeneration';
@@ -54,7 +53,23 @@ const ReadingContainer: React.FC = () => {
     setShowHistory(false);
   }, [handleReadingComplete]);
 
-  const cardCount = selectedSpread === 'single' ? 1 : 3;
+  // Updated card count logic to properly handle all spread types
+  const getCardCount = (spreadType: ReadingType): number => {
+    switch (spreadType) {
+      case 'single':
+        return 1;
+      case 'three-card':
+        return 3;
+      case 'celtic-cross':
+        return 10;
+      case 'relationship':
+        return 5;
+      default:
+        return 3;
+    }
+  };
+
+  const cardCount = getCardCount(selectedSpread);
   const deckInfo = getDeckInfo();
 
   return (
@@ -148,11 +163,12 @@ const ReadingContainer: React.FC = () => {
         )}
       </div>
 
-      {/* Shuffle Animation */}
+      {/* Shuffle Animation with correct card count */}
       <CardShuffleAnimation
         isShuffling={isShuffling}
         onShuffleComplete={handleShuffleComplete}
         cardCount={cardCount}
+        spreadType={selectedSpread}
       />
 
       {/* Reading History */}

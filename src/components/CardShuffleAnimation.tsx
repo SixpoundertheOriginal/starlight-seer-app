@@ -2,17 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Sparkles } from 'lucide-react';
+import { ReadingType } from '@/types/tarot';
 
 interface CardShuffleAnimationProps {
   isShuffling: boolean;
   onShuffleComplete: () => void;
   cardCount: number;
+  spreadType: ReadingType;
 }
 
 const CardShuffleAnimation: React.FC<CardShuffleAnimationProps> = ({
   isShuffling,
   onShuffleComplete,
-  cardCount
+  cardCount,
+  spreadType
 }) => {
   const [shuffleStage, setShuffleStage] = useState<'idle' | 'shuffling' | 'dealing'>('idle');
 
@@ -34,6 +37,69 @@ const CardShuffleAnimation: React.FC<CardShuffleAnimationProps> = ({
   }, [isShuffling, onShuffleComplete]);
 
   if (!isShuffling && shuffleStage === 'idle') return null;
+
+  const getShuffleText = () => {
+    switch (spreadType) {
+      case 'celtic-cross':
+        return 'Preparing your Celtic Cross reading...';
+      case 'relationship':
+        return 'Arranging your Relationship spread...';
+      case 'three-card':
+        return 'Drawing your three cards...';
+      case 'single':
+        return 'Selecting your card...';
+      default:
+        return 'Shuffling the cosmic deck...';
+    }
+  };
+
+  const getDealingText = () => {
+    switch (spreadType) {
+      case 'celtic-cross':
+        return 'The sacred cross has formed...';
+      case 'relationship':
+        return 'The connection reveals itself...';
+      default:
+        return 'The cards have chosen their positions...';
+    }
+  };
+
+  const getCardLayout = () => {
+    if (cardCount <= 3) {
+      // Single row for 1-3 cards
+      return Array.from({ length: cardCount }, (_, i) => ({
+        x: (i - (cardCount - 1) / 2) * 100,
+        y: 0,
+        rotate: (i - (cardCount - 1) / 2) * 5,
+        delay: i * 0.2
+      }));
+    } else if (cardCount === 5) {
+      // Relationship spread layout
+      return [
+        { x: -120, y: -40, rotate: -10, delay: 0 },    // You
+        { x: 120, y: -40, rotate: 10, delay: 0.2 },    // Them
+        { x: 0, y: 0, rotate: 0, delay: 0.4 },         // Connection
+        { x: -80, y: 60, rotate: -5, delay: 0.6 },     // Challenges
+        { x: 80, y: 60, rotate: 5, delay: 0.8 }        // Potential
+      ];
+    } else {
+      // Celtic Cross layout (10 cards)
+      return [
+        { x: 0, y: 0, rotate: 0, delay: 0 },           // Present
+        { x: 0, y: 0, rotate: 90, delay: 0.1 },        // Challenge (crossed)
+        { x: -100, y: 0, rotate: -5, delay: 0.2 },     // Distant Past
+        { x: 0, y: 80, rotate: 5, delay: 0.3 },        // Recent Past
+        { x: 0, y: -80, rotate: -5, delay: 0.4 },      // Possible Outcome
+        { x: 100, y: 0, rotate: 5, delay: 0.5 },       // Near Future
+        { x: 200, y: -60, rotate: 0, delay: 0.6 },     // Your Approach
+        { x: 200, y: -20, rotate: 0, delay: 0.7 },     // External Influences
+        { x: 200, y: 20, rotate: 0, delay: 0.8 },      // Hopes & Fears
+        { x: 200, y: 60, rotate: 0, delay: 0.9 }       // Final Outcome
+      ];
+    }
+  };
+
+  const cardPositions = getCardLayout();
 
   return (
     <div className="fixed inset-0 bg-cosmic-gradient/90 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -101,7 +167,7 @@ const CardShuffleAnimation: React.FC<CardShuffleAnimationProps> = ({
                 transition={{ duration: 1.5, repeat: Infinity }}
                 className="text-gold-300 text-xl font-serif"
               >
-                Shuffling the cosmic deck...
+                {getShuffleText()}
               </motion.div>
             </motion.div>
           )}
@@ -113,11 +179,15 @@ const CardShuffleAnimation: React.FC<CardShuffleAnimationProps> = ({
               animate={{ opacity: 1 }}
               className="space-y-8"
             >
-              <div className="flex justify-center space-x-4">
-                {Array.from({ length: cardCount }, (_, i) => (
+              <div className="relative flex justify-center items-center" style={{ minHeight: '200px', minWidth: '400px' }}>
+                {cardPositions.map((position, i) => (
                   <motion.div
                     key={i}
-                    className="tarot-card-back w-20 h-32 rounded-lg"
+                    className="absolute tarot-card-back rounded-lg"
+                    style={{
+                      width: cardCount > 5 ? '60px' : '80px',
+                      height: cardCount > 5 ? '90px' : '120px'
+                    }}
                     initial={{ 
                       x: 0, 
                       y: 0, 
@@ -125,13 +195,13 @@ const CardShuffleAnimation: React.FC<CardShuffleAnimationProps> = ({
                       scale: 0.8 
                     }}
                     animate={{ 
-                      x: (i - (cardCount - 1) / 2) * 100,
-                      y: 0,
-                      rotate: (i - (cardCount - 1) / 2) * 5,
+                      x: position.x,
+                      y: position.y,
+                      rotate: position.rotate,
                       scale: 1
                     }}
                     transition={{
-                      delay: i * 0.2,
+                      delay: position.delay,
                       duration: 0.6,
                       ease: "easeOut"
                     }}
@@ -145,7 +215,7 @@ const CardShuffleAnimation: React.FC<CardShuffleAnimationProps> = ({
                 transition={{ delay: 1 }}
                 className="text-gold-300 text-xl font-serif"
               >
-                The cards have chosen their positions...
+                {getDealingText()}
               </motion.div>
             </motion.div>
           )}
