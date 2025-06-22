@@ -1,13 +1,14 @@
 
 import { useState, useCallback } from 'react';
 import { TarotReading as TarotReadingType, ReadingType, CardPosition } from '@/types/tarot';
-import { getRandomCards } from '@/data/tarotDeck';
+import { useDeckSelection } from './useDeckSelection';
 import { SPREADS } from '@/data/spreads';
 import { useToast } from '@/hooks/use-toast';
 
 export const useAIReadingGeneration = () => {
   const [isGeneratingReading, setIsGeneratingReading] = useState(false);
   const { toast } = useToast();
+  const { getCardsFromSelectedDeck, getDeckInfo } = useDeckSelection();
 
   const generateAIInterpretation = useCallback(async (positions: CardPosition[], userQuestion?: string): Promise<string> => {
     try {
@@ -15,7 +16,8 @@ export const useAIReadingGeneration = () => {
         `${pos.name}: ${pos.card!.name}${pos.isReversed ? ' (Reversed)' : ''} - ${pos.isReversed ? pos.card!.reversedMeaning : pos.card!.uprightMeaning}`
       ).join('\n');
 
-      const prompt = `You are a mystical tarot reader with deep knowledge of the cosmic energies. Provide a profound, insightful reading based on these cards:
+      const deckInfo = getDeckInfo();
+      const prompt = `You are a mystical tarot reader with deep knowledge of the cosmic energies. You are reading from the ${deckInfo.name} (${deckInfo.description}). Provide a profound, insightful reading based on these cards:
 
 ${cardsDescription}
 
@@ -50,10 +52,11 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
       // Fallback to enhanced static interpretation
       return generateEnhancedStaticInterpretation(positions, userQuestion);
     }
-  }, []);
+  }, [getDeckInfo]);
 
   const generateEnhancedStaticInterpretation = useCallback((positions: CardPosition[], userQuestion?: string): string => {
-    let interpretation = "The cosmic tapestry reveals a profound message woven through the ancient symbols before you.\n\n";
+    const deckInfo = getDeckInfo();
+    let interpretation = `The cosmic tapestry reveals a profound message woven through the ancient symbols of the ${deckInfo.name}.\n\n`;
     
     if (userQuestion) {
       interpretation += `In response to your heartfelt inquiry: "${userQuestion}"\n\n`;
@@ -86,7 +89,7 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
     interpretation += "Remember, dear seeker, that you are both the author and the protagonist of your story. The cards illuminate the path, but your heart holds the compass. May this reading serve as a gentle guide as you dance with the mysteries of existence.";
     
     return interpretation;
-  }, []);
+  }, [getDeckInfo]);
 
   const generateReading = useCallback(async (
     selectedSpread: ReadingType,
@@ -100,7 +103,7 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
       
       const spread = { ...SPREADS[selectedSpread === 'single' ? 'single' : 'threeCard'] };
       const cardCount = spread.positions.length;
-      const drawnCards = getRandomCards(cardCount);
+      const drawnCards = getCardsFromSelectedDeck(cardCount);
       
       spread.positions = spread.positions.map((position, index) => ({
         ...position,
@@ -133,7 +136,7 @@ Begin with "The cosmic tapestry reveals..." and maintain a tone of ancient wisdo
     } finally {
       setIsGeneratingReading(false);
     }
-  }, [generateAIInterpretation, toast]);
+  }, [generateAIInterpretation, getCardsFromSelectedDeck, toast]);
 
   return {
     isGeneratingReading,

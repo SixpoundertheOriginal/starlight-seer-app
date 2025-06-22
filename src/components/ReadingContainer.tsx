@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { useReadingFlow } from '@/hooks/useReadingFlow';
 import { useAIReadingGeneration } from '@/hooks/useAIReadingGeneration';
 import { useReadingHistory } from '@/hooks/useReadingHistory';
+import { useDeckSelection } from '@/hooks/useDeckSelection';
 import ReadingHeader from './ReadingHeader';
 import QuestionInput from './QuestionInput';
 import SpreadSelector from './SpreadSelector';
@@ -10,13 +11,15 @@ import ReadingControls from './ReadingControls';
 import ReadingDisplay from './ReadingDisplay';
 import CardShuffleAnimation from './CardShuffleAnimation';
 import ReadingHistory from './ReadingHistory';
+import DeckSelector from './DeckSelector';
 import { Button } from '@/components/ui/button';
-import { History } from 'lucide-react';
+import { History, Settings } from 'lucide-react';
 import { TarotReading } from '@/types/tarot';
 
 const ReadingContainer: React.FC = () => {
   const [isShuffling, setIsShuffling] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showDeckSelector, setShowDeckSelector] = useState(false);
   
   const {
     currentStep,
@@ -32,6 +35,7 @@ const ReadingContainer: React.FC = () => {
 
   const { isGeneratingReading, generateReading } = useAIReadingGeneration();
   const { saveReading } = useReadingHistory();
+  const { getDeckInfo } = useDeckSelection();
 
   const handleGenerateReading = useCallback(() => {
     setIsShuffling(true);
@@ -51,6 +55,7 @@ const ReadingContainer: React.FC = () => {
   }, [handleReadingComplete]);
 
   const cardCount = selectedSpread === 'single' ? 1 : 3;
+  const deckInfo = getDeckInfo();
 
   return (
     <div className="min-h-screen bg-cosmic-gradient py-12 px-4 relative">
@@ -62,8 +67,16 @@ const ReadingContainer: React.FC = () => {
         ))}
       </div>
 
-      {/* History Button */}
-      <div className="fixed top-6 right-6 z-40">
+      {/* Top Controls */}
+      <div className="fixed top-6 right-6 z-40 flex gap-3">
+        <Button
+          onClick={() => setShowDeckSelector(true)}
+          variant="outline"
+          className="border-gold-400/50 text-gold-200 hover:bg-gold-400/10 backdrop-blur-sm"
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          {deckInfo.name}
+        </Button>
         <Button
           onClick={() => setShowHistory(true)}
           variant="outline"
@@ -76,6 +89,22 @@ const ReadingContainer: React.FC = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <ReadingHeader />
+
+        {/* Deck Selector Modal */}
+        {showDeckSelector && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-cosmic-gradient max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-3xl p-8 relative">
+              <Button
+                onClick={() => setShowDeckSelector(false)}
+                variant="ghost"
+                className="absolute top-4 right-4 text-gold-300 hover:text-gold-100"
+              >
+                ✕
+              </Button>
+              <DeckSelector onDeckChange={() => setShowDeckSelector(false)} />
+            </div>
+          </div>
+        )}
 
         {/* Step Content */}
         {currentStep === 'question' && (
