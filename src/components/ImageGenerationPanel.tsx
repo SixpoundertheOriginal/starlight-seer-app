@@ -4,7 +4,7 @@ import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Download } from 'lucide-react';
 import { useTarotImageGeneration } from '@/hooks/useTarotImageGeneration';
-import { tarotDeck } from '@/data/tarotDeck';
+import { MAJOR_ARCANA, MINOR_ARCANA } from '@/data/tarotDeck';
 
 const ImageGenerationPanel = () => {
   const { 
@@ -13,11 +13,12 @@ const ImageGenerationPanel = () => {
     generationProgress 
   } = useTarotImageGeneration();
 
-  const cardsWithoutImages = tarotDeck.filter(card => !card.imageUrl);
+  const allCards = [...MAJOR_ARCANA, ...MINOR_ARCANA];
+  const cardsWithoutImages = allCards.filter(card => !card.imageUrl);
 
   const handleGenerateImages = async () => {
     try {
-      const generatedImages = await generateAllMissingImages(tarotDeck);
+      const generatedImages = await generateAllMissingImages(allCards);
       console.log('Generated images:', generatedImages);
       
       // Here you could save the generated images to local storage or a database
@@ -47,7 +48,7 @@ const ImageGenerationPanel = () => {
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
           <p>Missing images: <span className="font-semibold">{cardsWithoutImages.length}</span> cards</p>
-          <p>Total cards: <span className="font-semibold">{tarotDeck.length}</span></p>
+          <p>Total cards: <span className="font-semibold">{allCards.length}</span></p>
         </div>
 
         {isGenerating ? (
